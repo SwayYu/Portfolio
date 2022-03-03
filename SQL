@@ -1,1 +1,13 @@
-select * from customer_bank
+#因沒有實際的資料庫可以演練，以學習使用的教材作為SQL示範，此資料Table是紀錄每一部電影的相關資訊，包含上映年分、國家、預算、收入等資訊
+#因想要了解各國家電影業的發展，抓出各國家的平均預算與收入
+SELECT
+	country,
+	avg(budget) as avg_budget,
+	avg(gross) as avg_gross
+FROM films
+#使用GROUP BY與聚合函數一起使用，算出個國家的平均值
+GROUP BY country
+#為了排除發行量較少之國家，以至少10部作為最低準則。使用HAVING是因為WHERE的語法中不能使用聚合函數
+HAVING count(title) > 10
+#透過排序提高資料Table的可讀性
+ORDER BY country;
