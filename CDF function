@@ -1,0 +1,9 @@
+import numpy as np
+
+#以下是CDF的function，目的在輸入1個變數資料時，可以得到cdf圖形所需的x與y軸，後續可以使用matplotlib.pyplot進行圖形的繪製。
+#CDF適合在資料探索時，比對不同資料間的差異
+def ECDF(data)
+  x = np.sort(data)
+  y = np.arange(1, len(data)+1) / len(data)
+  return x, y
+  
