@@ -1,0 +1,49 @@
+#data是先用numpy的隨機變數產生
+import numpy as np
+import matplotlib.pyplot as plt
+
+np.random.seed(42)
+empirical_data = np.random.poisson(2.53, size=500)
+
+#ecdf是得到cdf圖形所需的x, y軸
+def ecdf(data):
+    x = np.sort(data)
+    y = np.arange(1, len(data)+1) / len(data)
+    return x, y
+    
+
+empirical_data_mean = np.mean(empirical_data)
+theory_data = np.random.poisson(empirical_data_mean, size=len(empirical_data))
+x, y = ecdf(empirical_data)
+x_theory, y_theory = ecdf(theory_data)
+
+_ = plt.plot(x, y, marker='.', linestyle='none')
+_ = plt.plot(x_theory, y_theory, marker='.', linestyle='none')
+_ = plt.xlabel('Number of Sales')
+_ = plt.ylabel('ECDF')
+plt.show()
+
+# 1. 上圖的cdf圖形高度重疊，我們相信該資料屬於Poisson分配。
+# 2. 我們想要預測銷售獎金是多少，假設獎金規則為超過10門後，每門領300獎勵金
+# 3. 總共有4個參數，銷售額、員工數、獎勵門檻、獎勵金，有需要及時調整時，就能夠馬上呈現不同情況下的花費獎金預測
+
+def award_prediction(sales, staff, threshold, rewards):
+    simulation_sample = np.random.poisson(sales/staff, staff)
+    award_n = np.empty(staff)
+    for i in range(staff):
+        if simulation_sample[i] >= threshold:
+            award_n[i] = simulation_sample[i] - threshold
+        else:
+            award_n[i] =0
+    award = award_n * rewards
+    ttl_award = np.sum(award) 
+    return ttl_award
+
+def award_prediction_replicates(sales, staff, threshold, rewards, size=1):
+    ttl_award_replicates = np.empty(size)
+    for i in range(size):
+        ttl_award_replicates[i] = award_prediction(sales, staff, threshold, rewards)
+    return ttl_award_replicates
+
+prediction_1 = award_prediction_replicates(3512, 428, 10, 300, 10000)
+print(np.mean(prediction_1))
