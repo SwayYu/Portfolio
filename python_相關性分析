@@ -1,0 +1,21 @@
+import numpy as np
+
+#創建2組完全負相關的樣本資料
+sample_1 = np.arange(0, 100)
+sample_2 = np.linspace(100, 0, 100)
+
+def pearson_r(data_1, data_2):
+    pearson_r = np.corrcoef(data_1, data_2)
+    return pearson_r[0, 1]
+
+r_obersvation = pearson_r(sample_1, sample_2)   #樣本資料的相關係數
+
+#檢定2組資料是否有相關性
+replicates = np.empty(10000)
+
+for i in range(10000):
+    sample_1_permutation = np.random.permutation(sample_1)
+    replicates[i] = pearson_r(sample_1_permutation, sample_2)
+
+p = np.sum(replicates <= r_obersvation) / len(replicates)
+print("p-value是", p, ",統計上拒絕2組資料無相關性的虛無假設")
