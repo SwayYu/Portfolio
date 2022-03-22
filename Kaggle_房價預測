@@ -1,0 +1,54 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline
+
+df = pd.read_csv('train.csv')
+
+df.isna().sum()
+df.shape
+df.info()
+
+columns = []
+for column in df.columns:
+    if df[column].dtype != object:
+        columns.append(column)
+        
+train = df[columns]
+train = train.set_index('Id')
+train.isna().sum()
+
+train = train[~train['LotFrontage'].isna()]
+train = train[~train['GarageYrBlt'].isna()]
+train = train[~train['MasVnrArea'].isna()]
+
+sns.boxplot(data=train, x='LotFrontage')
+sns.boxplot(data=train, x='LotArea')
+
+train.plot(kind='scatter',x='LotFrontage',y= 'LotArea')
+
+train= train[(train['LotFrontage']<250) & (train['LotArea']<150000)]
+sns.boxplot(data=train, x='MasVnrArea')
+
+train.shape
+
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import ElasticNet
+from sklearn.model_selection import train_test_split, GridSearchCV
+
+y = train['SalePrice']
+X = train.drop('SalePrice', axis=1)
+
+steps = [('scaler', StandardScaler()),
+       ('elasticnet', ElasticNet())]
+pipeline = Pipeline(steps)
+
+params = {'elasticnet__l1_ratio': np.linspace(0, 1, 30)}
+cv = GridSearchCV(pipeline, params, cv=5)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+cv.fit(X_train, y_train)
+cv.score(X_test, y_test)
