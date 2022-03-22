@@ -1,7 +1,7 @@
-#data是先用numpy的隨機變數產生
 import numpy as np
 import matplotlib.pyplot as plt
 
+#創建一組虛擬數據
 np.random.seed(42)
 empirical_data = np.random.poisson(2.53, size=500)
 
