@@ -1,4 +1,3 @@
-#透過INNER JOIN將countries、populations、economies 3張table拉在一起，國家的code作為合併的key值
 SELECT 
 	c.code, 
 	name, 
@@ -6,10 +5,10 @@ SELECT
 	e.year, 
 	fertility_rate, 
 	unemployment_rate
-
 FROM countries AS c
+
 INNER JOIN populations AS p
 	ON c.code = p.country_code
-#因populations、economies 2張表都有各年份的資料，為了讓各年份資料統一，多增加year的key值
+
 INNER JOIN economies AS e
 	ON c.code = e.code and p.year = e.year;
